@@ -14,6 +14,7 @@ namespace DataAdapterPrac
         DataGridView gridView;
         Button btnUpdate;
         DataTable dt;
+
         public Form1()
         {
             InitializeComponent();
@@ -38,24 +39,12 @@ namespace DataAdapterPrac
             {
                 con = new OleDbConnection(@"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\Anand.Sinha\Documents\ComponentOne Samples\Common\C1NWind.mdb");
                 con.Open();
+                da = new OleDbDataAdapter(new OleDbCommand("Select * from Cities", con));
+                OleDbCommandBuilder commandBuilder = new OleDbCommandBuilder();
+                commandBuilder.DataAdapter = da;
 
-                da = new OleDbDataAdapter()
-                {
-                    UpdateCommand = new OleDbCommand(@"Update Cities Set City = @City where ID = @ID", con),
-                    InsertCommand = new OleDbCommand(@"Insert into Cities values (@ID, @City)", con),
-                    DeleteCommand = new OleDbCommand(@"Delete from cities where ID = @ID", con),
-                    SelectCommand = new OleDbCommand("Select * From Cities", con),
-                };
-
-                da.InsertCommand.Parameters.Add("@ID", OleDbType.Integer, 3, "ID");
-                da.InsertCommand.Parameters.Add("@City", OleDbType.Char, 10, "City");
-                da.UpdateCommand.Parameters.Add("@City", OleDbType.Char, 10, "City");
-                da.UpdateCommand.Parameters.Add("@ID", OleDbType.Integer, 3, "ID");
-                da.DeleteCommand.Parameters.Add("@ID", OleDbType.Integer, 3, "ID");
-
-                OleDbDataReader dr = da.SelectCommand.ExecuteReader();
                 dt = new DataTable();
-                dt.Load(dr);
+                da.Fill(dt);
                 gridView.DataSource = dt;
             }
             catch (Exception ex)
